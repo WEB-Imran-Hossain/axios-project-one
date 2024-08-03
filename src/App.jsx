@@ -12,6 +12,7 @@ export default function App() {
   const [post, setPost] = useState(null); // post I am editing
   const [error, setError] = useState(null);
 
+  //handle   new post /adding
   const handleAddPost = async (newPost) => {
     try {
       const id = posts.length ? Number(posts[posts.length - 1].id) + 1 : 1;
@@ -40,19 +41,26 @@ export default function App() {
     }
   };
 
+  //handle delete for post
   const handleDeletePost = async (postId) => {
     if (confirm("Are you sure you want to delete the post?")) {
       try {
-        await api.delete(`/posts/${postId}`);
+        await axios.delete(`http://localhost:8000/posts/${postId}`);
         const newPosts = posts.filter((post) => post.id !== postId);
         setPosts(newPosts);
       } catch (err) {
-        setError(err.message);
+        if (err.response) {
+          //error came from server
+          setError(
+            `Error from server: status: ${err.response.status} - message: ${err.response.data}`
+          );
+        } else {
+          //network error, did not reach to server
+          setError(err.message);
+        }
       }
-    } else {
-      console.log("You chose not to delete the post!");
     }
-  };
+  }
 
   const handleEditPost = async (updatedPost) => {
     try {
@@ -85,7 +93,7 @@ export default function App() {
   //   fetchPosts();
   // }, []);
 
-  // using axios
+  // using axios for data fetching
   useEffect(() => {
     const fetchPosts = async () => {
       try {
