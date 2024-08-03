@@ -60,11 +60,15 @@ export default function App() {
         }
       }
     }
-  }
+  };
 
+  //handle edit for post
   const handleEditPost = async (updatedPost) => {
     try {
-      const response = await api.patch(`/posts/${updatedPost.id}`, updatedPost);
+      const response = await axios.patch(
+        `http://localhost:8000/posts/${updatedPost.id}`,
+        updatedPost
+      );
 
       const updatedPosts = posts.map((post) =>
         post.id === response.data.id ? response.data : post
@@ -72,7 +76,15 @@ export default function App() {
 
       setPosts(updatedPosts);
     } catch (err) {
-      setError(err.message);
+      if (err.response) {
+        //error came from server
+        setError(
+          `Error from server: status: ${err.response.status} - message: ${err.response.data}`
+        );
+      } else {
+        //network error, did not reach to server
+        setError(err.message);
+      }
     }
   };
 
