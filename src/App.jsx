@@ -21,22 +21,11 @@ export default function App() {
         ...newPost,
       };
 
-      const response = await api.post(
-        "/posts",
-        finalPost
-      );
+      const response = await api.post("/posts", finalPost);
 
       setPosts([...posts, response.data]);
     } catch (err) {
-      if (err.response) {
-        //error came from server
-        setError(
-          `Error from server: status: ${err.response.status} - message: ${err.response.data}`
-        );
-      } else {
-        //network error, did not reach to server
-        setError(err.message);
-      }
+      setError(err.message);
     }
   };
 
@@ -48,15 +37,7 @@ export default function App() {
         const newPosts = posts.filter((post) => post.id !== postId);
         setPosts(newPosts);
       } catch (err) {
-        if (err.response) {
-          //error came from server
-          setError(
-            `Error from server: status: ${err.response.status} - message: ${err.response.data}`
-          );
-        } else {
-          //network error, did not reach to server
-          setError(err.message);
-        }
+        setError(err.message);
       }
     }
   };
@@ -64,10 +45,7 @@ export default function App() {
   //handle edit for post
   const handleEditPost = async (updatedPost) => {
     try {
-      const response = await api.patch(
-        `/posts/${updatedPost.id}`,
-        updatedPost
-      );
+      const response = await api.patch(`/posts/${updatedPost.id}`, updatedPost);
 
       const updatedPosts = posts.map((post) =>
         post.id === response.data.id ? response.data : post
@@ -75,15 +53,7 @@ export default function App() {
 
       setPosts(updatedPosts);
     } catch (err) {
-      if (err.response) {
-        //error came from server
-        setError(
-          `Error from server: status: ${err.response.status} - message: ${err.response.data}`
-        );
-      } else {
-        //network error, did not reach to server
-        setError(err.message);
-      }
+      setError(err.message);
     }
   };
 
@@ -113,15 +83,7 @@ export default function App() {
           setPosts(response.data);
         }
       } catch (err) {
-        if (err.response) {
-          //error came from server
-          setError(
-            `Error from server: status: ${err.response.status} - message: ${err.response.data}`
-          );
-        } else {
-          //network error, did not reach to server
-          setError(err.message);
-        }
+        setError(err.message);
       }
     };
 
