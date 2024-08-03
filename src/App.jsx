@@ -21,11 +21,22 @@ export default function App() {
         ...newPost,
       };
 
-      const response = await api.post("/posts", finalPost);
+      const response = await axios.post(
+        "http://localhost:8000/posts",
+        finalPost
+      );
 
       setPosts([...posts, response.data]);
     } catch (err) {
-      setError(err.message);
+      if (err.response) {
+        //error came from server
+        setError(
+          `Error from server: status: ${err.response.status} - message: ${err.response.data}`
+        );
+      } else {
+        //network error, did not reach to server
+        setError(err.message);
+      }
     }
   };
 
@@ -74,27 +85,26 @@ export default function App() {
   //   fetchPosts();
   // }, []);
 
-
   // using axios
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/posts")
+        const response = await axios.get("http://localhost:8000/posts");
         if (response && response.data) {
-          setPosts(response.data)
+          setPosts(response.data);
         }
       } catch (err) {
         if (err.response) {
           //error came from server
-          setError(`Error from server: status: ${err.response.status} - message: ${err.response.data}`)
+          setError(
+            `Error from server: status: ${err.response.status} - message: ${err.response.data}`
+          );
         } else {
           //network error, did not reach to server
-          setError(err.message)
+          setError(err.message);
         }
-
       }
-    }
-
+    };
 
     fetchPosts();
   }, []);
